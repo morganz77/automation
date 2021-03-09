@@ -17,13 +17,19 @@ docker run -p 8080:8080 automation
     gcloud run deploy --image gcr.io/$PROJECT_ID/automation --platform managed
     ```
 
-## Google Cound Scheduler Job
+## Jobs
+
+[hn-job](https://github.com/morganz77/hn-job)
+
+## Google Cound Scheduler
 
 UI seems to be very limited. Use command line
+
+### Sample commands
 
 ```bash
 # service url
 gcloud run services describe automation --format 'value(status.url)'
 # create job for hn
-gcloud beta scheduler jobs create http hn --schedule "1 8,14,21 * * *" --time-zone="America/New_York" --http-method=POST --headers="Content-Type=application/json" --message-body='{"jobType": "HN"}' --uri=[SERVICE-URL]--oidc-service-account-email=[SERVICE-ACCOUNT_NAME]@[PROJECT-ID].iam.gserviceaccount.com --oidc-token-audience=[SERVICE-URL]
+gcloud beta scheduler jobs create http hn --schedule "1 8,14,21 * * *" --time-zone="America/New_York" --http-method=POST --headers="Content-Type=application/json" --message-body='{"jobType": "HN"}' --uri=[SERVICE-URL] --oidc-service-account-email=[SERVICE-ACCOUNT_NAME]@[PROJECT-ID].iam.gserviceaccount.com --oidc-token-audience=[SERVICE-URL]
 ```
