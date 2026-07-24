@@ -1,5 +1,7 @@
 # automation
 
+[![CI](https://github.com/morganz77/automation/actions/workflows/ci.yml/badge.svg)](https://github.com/morganz77/automation/actions/workflows/ci.yml)
+
 An HTTP-triggered background job runner for Google Cloud Run. It exposes a
 small Express server that runs jobs on demand, typically driven by Cloud
 Scheduler.
@@ -18,14 +20,18 @@ directly under `src/jobs/hn`, so this repository is fully self-contained.
 
 ```
 src/
-  server.ts          Express server; routes job requests
+  server.ts          Bootstrap: build the app, listen, handle SIGTERM
+  app.ts             createApp(); Express routes (testable)
   config.ts          Env-backed configuration (read lazily)
+  app.spec.ts        Route tests (supertest)
+  config.spec.ts     Config validation tests
   jobs/
     hn/
       index.ts       runHnJob() entry point
       hnutils.ts     Hacker News fetch/format helpers
       dbx.ts         Dropbox-backed "already seen" cache
       hnutils.spec.ts
+      dbx.spec.ts
 types/
   pushbullet.d.ts    Type shim for the untyped pushbullet package
 ```
