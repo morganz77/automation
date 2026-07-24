@@ -13,6 +13,9 @@
     "url": "git+https://github.com/morganz77/automation.git"
   },
   "license": "ISC",
+  "engines": {
+    "node": ">=20"
+  },
   "dependencies": {
     "dotenv": "^16.4.5",
     "dropbox": "^9.2.0",
@@ -23,9 +26,11 @@
   "devDependencies": {
     "@types/express": "^4.17.21",
     "@types/jest": "^29.5.12",
-    "@types/node": "^18.19.0",
+    "@types/node": "^22.10.0",
     "@types/node-fetch": "^2.6.11",
+    "@types/supertest": "^6.0.2",
     "jest": "^29.7.0",
+    "supertest": "^7.0.0",
     "ts-jest": "^29.1.2",
     "typescript": "^5.4.5"
   }
