@@ -1,38 +1,15 @@
 import 'dotenv/config';
-import express from 'express';
-import { runHnJob } from './jobs/hn';
-
-const app = express();
-
-interface JobRequest {
-  jobType: 'HN';
-}
-
-app.use(express.json());
-
-app.get('/', (_req, res) => {
-  res.send('It works!');
-});
-
-app.post('/', async (req, res) => {
-  const { jobType }: JobRequest = req.body;
-  try {
-    switch (jobType) {
-      case 'HN':
-        await runHnJob();
-        res.status(201).end();
-        break;
-      default:
-        console.error(`Unknown job type requested: ${jobType}`);
-        res.status(400).end();
-    }
-  } catch (e) {
-    console.error(e instanceof Error ? e.stack : JSON.stringify(e));
-    res.status(500).end();
-  }
-});
+import { createApp } from './app';
 
 const port = process.env.PORT || 8080;
-app.listen(port, () => {
+
+const server = createApp().listen(port, () => {
   console.log(`server started on port ${port}`);
+});
+
+// Cloud Run sends SIGTERM before stopping an instance; stop accepting new
+// connections and exit cleanly.
+process.on('SIGTERM', () => {
+  console.log('SIGTERM received, shutting down');
+  server.close(() => process.exit(0));
 });
