@@ -9,7 +9,7 @@ interface Item {
 
 async function topNItems(n: number): Promise<Item[]> {
   const response = await fetch(
-    'https://hacker-news.firebaseio.com/v0/topstories.json'
+    'https://hacker-news.firebaseio.com/v0/topstories.json',
   );
   const itemIds = (await response.json()) as number[];
 
@@ -33,7 +33,7 @@ function generateNotes(items: Item[]): string {
     .map((item) => {
       const hnLink = `https://news.ycombinator.com/item?id=${item.id}`;
       const base = `${item.title}\n${item.score} points ${Math.trunc(
-        (+new Date() / 1000 - item.time) / 3600
+        (+new Date() / 1000 - item.time) / 3600,
       )} hours ago\n${hnLink}`;
 
       return item.url ? `${base}\n${item.url}` : `${base}`;

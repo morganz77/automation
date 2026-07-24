@@ -47,11 +47,11 @@ types/
 The HN job requires the following environment variables (read only when the job
 runs, so the server still starts without them):
 
-| Variable            | Description                  |
-| ------------------- | ---------------------------- |
-| `PushBulletApiKey`  | Pushbullet API key           |
-| `DeviceId`          | Target Pushbullet device id  |
-| `DropAccessToken`   | Dropbox access token (cache) |
+| Variable           | Description                  |
+| ------------------ | ---------------------------- |
+| `PushBulletApiKey` | Pushbullet API key           |
+| `DeviceId`         | Target Pushbullet device id  |
+| `DropAccessToken`  | Dropbox access token (cache) |
 
 For local development, copy `.env.example` to `.env` and fill in the values;
 they are loaded automatically via `dotenv`. In Cloud Run they are set as plain

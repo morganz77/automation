@@ -45,7 +45,7 @@ describe('dropbox cache', () => {
     await addToExisting([2, 3]);
 
     expect(mockFilesUpload).toHaveBeenCalledWith(
-      expect.objectContaining({ contents: JSON.stringify([1, 2, 3]) })
+      expect.objectContaining({ contents: JSON.stringify([1, 2, 3]) }),
     );
   });
 

@@ -11,15 +11,15 @@ describe('hacker news utils', () => {
   it('generate top n item ids correctly', async () => {
     const fakeIds = Array.from(Array(100).keys());
     const fakeItem = {
-      'by': 'kmcquade',
-      'descendants': 76,
-      'id': 26154038,
-      'score': 307,
-      'time': 1613485014,
-      'title':
+      by: 'kmcquade',
+      descendants: 76,
+      id: 26154038,
+      score: 307,
+      time: 1613485014,
+      title:
         'Show HN: Endgame – An AWS Pentesting tool to backdoor or expose AWS resources',
-      'type': 'story',
-      'url': 'https://github.com/salesforce/endgame',
+      type: 'story',
+      url: 'https://github.com/salesforce/endgame',
     };
     fetchMock.mockImplementation((url: string) => {
       if (url.includes('v0/topstories')) {
