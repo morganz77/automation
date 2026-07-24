@@ -48,9 +48,9 @@ runs, so the server still starts without them):
 | `DropAccessToken`   | Dropbox access token (cache) |
 
 For local development, copy `.env.example` to `.env` and fill in the values;
-they are loaded automatically via `dotenv`. In Cloud Run these should be
-supplied as environment variables backed by Secret Manager rather than a
-committed `.env` file.
+they are loaded automatically via `dotenv`. In Cloud Run they are set as plain
+environment variables on the service (see the deploy step below); the `.env`
+file is not used there.
 
 ## Develop
 
@@ -74,6 +74,10 @@ docker run -p 8080:8080 \
 
 ## Deploy to Cloud Run
 
+The three job values are passed as plain environment variables on the service.
+Load them from a local `.env` and expand them so the literal values stay out of
+your shell history:
+
 ```bash
 PROJECT_ID=$(gcloud config get-value project)
 REGION=us-east1
@@ -81,19 +85,13 @@ REPO=automation-repo
 IMAGE="$REGION-docker.pkg.dev/$PROJECT_ID/$REPO/automation"
 
 gcloud builds submit --tag "$IMAGE"
+
+set -a; . ./.env; set +a
 gcloud run deploy automation \
   --image "$IMAGE" \
   --region "$REGION" \
-  --platform managed
-```
-
-Set the job secrets on the service (once), backed by Secret Manager:
-
-```bash
-gcloud run services update automation --region "$REGION" \
-  --set-secrets=PushBulletApiKey=pushbullet-api-key:latest,\
-DeviceId=pushbullet-device-id:latest,\
-DropAccessToken=dropbox-access-token:latest
+  --platform managed \
+  --set-env-vars "DropAccessToken=$DropAccessToken,PushBulletApiKey=$PushBulletApiKey,DeviceId=$DeviceId"
 ```
 
 ## Schedule the HN job
