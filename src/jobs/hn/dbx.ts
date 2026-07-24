@@ -1,5 +1,4 @@
 import { Dropbox } from 'dropbox';
-import fetch from 'node-fetch';
 import { dropboxAccessToken } from '../../config';
 import { Item } from './hnutils';
 
@@ -8,7 +7,9 @@ const CACHE_FILE = '/hn-job.json';
 function client(): Dropbox {
   return new Dropbox({
     accessToken: dropboxAccessToken(),
-    fetch: fetch,
+    // Use the runtime's built-in fetch (Node 18+); wrapped so it is invoked
+    // with the correct receiver.
+    fetch: (...args: Parameters<typeof fetch>) => fetch(...args),
   });
 }
 

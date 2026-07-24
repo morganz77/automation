@@ -1,15 +1,13 @@
-jest.mock('node-fetch', () => jest.fn());
-
-import fetch, {
-  RequestInfo,
-  RequestInit,
-  Response as NodeResPonse,
-} from 'node-fetch';
 import { generateNotes, Item, topNItems } from './hnutils';
 
-const { Response } = jest.requireActual('node-fetch');
+const fetchMock = jest.fn();
 
 describe('hacker news utils', () => {
+  beforeEach(() => {
+    fetchMock.mockReset();
+    global.fetch = fetchMock as unknown as typeof fetch;
+  });
+
   it('generate top n item ids correctly', async () => {
     const fakeIds = Array.from(Array(100).keys());
     const fakeItem = {
@@ -23,22 +21,15 @@ describe('hacker news utils', () => {
       'type': 'story',
       'url': 'https://github.com/salesforce/endgame',
     };
-    (fetch as jest.MockedFunction<typeof fetch>).mockImplementation(
-      (
-        url: RequestInfo,
-        init?: RequestInit | undefined
-      ): Promise<NodeResPonse> => {
-        if (typeof url === 'string') {
-          if (url.includes('v0/topstories')) {
-            return Promise.resolve(new Response(JSON.stringify(fakeIds)));
-          }
-          if (url.includes('v0/item/')) {
-            return Promise.resolve(new Response(JSON.stringify(fakeItem)));
-          }
-        }
-        return Promise.resolve(new Response(''));
+    fetchMock.mockImplementation((url: string) => {
+      if (url.includes('v0/topstories')) {
+        return Promise.resolve(new Response(JSON.stringify(fakeIds)));
       }
-    );
+      if (url.includes('v0/item/')) {
+        return Promise.resolve(new Response(JSON.stringify(fakeItem)));
+      }
+      return Promise.resolve(new Response(''));
+    });
 
     const ids = await topNItems(2);
     expect(ids.length).toBe(2);

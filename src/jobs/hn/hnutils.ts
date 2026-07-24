@@ -1,5 +1,3 @@
-import fetch from 'node-fetch';
-
 interface Item {
   id: number;
   type: 'job' | 'story' | 'comment' | 'poll' | 'pollopt';
@@ -13,7 +11,7 @@ async function topNItems(n: number): Promise<Item[]> {
   const response = await fetch(
     'https://hacker-news.firebaseio.com/v0/topstories.json'
   );
-  const itemIds: number[] = await response.json();
+  const itemIds = (await response.json()) as number[];
 
   const itemPromises = itemIds.slice(0, n).map(async (id) => {
     try {
