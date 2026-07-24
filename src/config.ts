@@ -12,4 +12,11 @@ function requireEnv(name: string): string {
 // values come from the service's environment variables.
 export const pushBulletApiKey = (): string => requireEnv('PushBulletApiKey');
 export const pushBulletDeviceId = (): string => requireEnv('DeviceId');
-export const dropboxAccessToken = (): string => requireEnv('DropAccessToken');
+
+// Dropbox uses an OAuth2 refresh token (with the app key/secret); the SDK
+// exchanges it for short-lived access tokens automatically.
+export const dropboxCredentials = () => ({
+  appKey: requireEnv('DropboxAppKey'),
+  appSecret: requireEnv('DropboxAppSecret'),
+  refreshToken: requireEnv('DropboxRefreshToken'),
+});

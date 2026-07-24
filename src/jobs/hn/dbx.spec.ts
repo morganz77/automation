@@ -25,7 +25,9 @@ const cache = (ids: number[]) => ({
 
 describe('dropbox cache', () => {
   beforeEach(() => {
-    process.env.DropAccessToken = 'token';
+    process.env.DropboxAppKey = 'app-key';
+    process.env.DropboxAppSecret = 'app-secret';
+    process.env.DropboxRefreshToken = 'refresh-token';
     mockFilesDownload.mockReset();
     mockFilesUpload.mockReset();
   });

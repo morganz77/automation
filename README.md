@@ -47,11 +47,20 @@ types/
 The HN job requires the following environment variables (read only when the job
 runs, so the server still starts without them):
 
-| Variable           | Description                  |
-| ------------------ | ---------------------------- |
-| `PushBulletApiKey` | Pushbullet API key           |
-| `DeviceId`         | Target Pushbullet device id  |
-| `DropAccessToken`  | Dropbox access token (cache) |
+| Variable              | Description                  |
+| --------------------- | ---------------------------- |
+| `PushBulletApiKey`    | Pushbullet API key           |
+| `DeviceId`            | Target Pushbullet device id  |
+| `DropboxAppKey`       | Dropbox app key              |
+| `DropboxAppSecret`    | Dropbox app secret           |
+| `DropboxRefreshToken` | Dropbox OAuth2 refresh token |
+
+Dropbox uses the OAuth2 refresh-token flow: store the app key/secret and a
+long-lived refresh token, and the SDK exchanges them for short-lived access
+tokens automatically. To mint a refresh token, run the authorization-code flow
+once with `token_access_type=offline`
+(`https://www.dropbox.com/oauth2/authorize?client_id=<APP_KEY>&token_access_type=offline&response_type=code`,
+then exchange the returned code at `https://api.dropboxapi.com/oauth2/token`).
 
 For local development, copy `.env.example` to `.env` and fill in the values;
 they are loaded automatically via `dotenv`. In Cloud Run they are set as plain
@@ -74,15 +83,17 @@ docker build -t automation:latest .
 docker run -p 8080:8080 \
   -e PushBulletApiKey=... \
   -e DeviceId=... \
-  -e DropAccessToken=... \
+  -e DropboxAppKey=... \
+  -e DropboxAppSecret=... \
+  -e DropboxRefreshToken=... \
   automation:latest
 ```
 
 ## Deploy to Cloud Run
 
-The three job values are passed as plain environment variables on the service.
-Load them from a local `.env` and expand them so the literal values stay out of
-your shell history:
+The job values are passed as plain environment variables on the service. Load
+them from a local `.env` and expand them so the literal values stay out of your
+shell history:
 
 ```bash
 PROJECT_ID=$(gcloud config get-value project)
@@ -97,7 +108,7 @@ gcloud run deploy automation \
   --image "$IMAGE" \
   --region "$REGION" \
   --platform managed \
-  --set-env-vars "DropAccessToken=$DropAccessToken,PushBulletApiKey=$PushBulletApiKey,DeviceId=$DeviceId"
+  --set-env-vars "PushBulletApiKey=$PushBulletApiKey,DeviceId=$DeviceId,DropboxAppKey=$DropboxAppKey,DropboxAppSecret=$DropboxAppSecret,DropboxRefreshToken=$DropboxRefreshToken"
 ```
 
 ## Schedule the HN job

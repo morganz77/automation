@@ -1,5 +1,5 @@
 import {
-  dropboxAccessToken,
+  dropboxCredentials,
   pushBulletApiKey,
   pushBulletDeviceId,
 } from './config';
@@ -18,16 +18,24 @@ describe('config', () => {
   it('reads each variable when present', () => {
     process.env.PushBulletApiKey = 'api-key';
     process.env.DeviceId = 'device-id';
-    process.env.DropAccessToken = 'drop-token';
+    process.env.DropboxAppKey = 'app-key';
+    process.env.DropboxAppSecret = 'app-secret';
+    process.env.DropboxRefreshToken = 'refresh-token';
 
     expect(pushBulletApiKey()).toBe('api-key');
     expect(pushBulletDeviceId()).toBe('device-id');
-    expect(dropboxAccessToken()).toBe('drop-token');
+    expect(dropboxCredentials()).toEqual({
+      appKey: 'app-key',
+      appSecret: 'app-secret',
+      refreshToken: 'refresh-token',
+    });
   });
 
   it('throws naming the missing variable', () => {
-    delete process.env.DropAccessToken;
+    process.env.DropboxAppKey = 'app-key';
+    process.env.DropboxAppSecret = 'app-secret';
+    delete process.env.DropboxRefreshToken;
 
-    expect(() => dropboxAccessToken()).toThrow(/DropAccessToken/);
+    expect(() => dropboxCredentials()).toThrow(/DropboxRefreshToken/);
   });
 });
