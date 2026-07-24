@@ -1,5 +1,5 @@
 import PushBullet = require('pushbullet');
-import { getHnJobConfig } from '../../config';
+import { pushBulletApiKey, pushBulletDeviceId } from '../../config';
 import * as dbx from './dbx';
 import { generateNotes, topNItems } from './hnutils';
 
@@ -9,8 +9,6 @@ import { generateNotes, topNItems } from './hnutils';
  * ones through Pushbullet.
  */
 export async function runHnJob(): Promise<void> {
-  const { pushBulletApiKey, pushBulletDeviceId } = getHnJobConfig();
-
   const items = await topNItems(100);
   const sorted = items
     .filter((i) => i.score > 80)
@@ -20,8 +18,10 @@ export async function runHnJob(): Promise<void> {
 
   const notes = generateNotes(final);
 
-  const pb = new PushBullet(pushBulletApiKey);
-  pb.note(pushBulletDeviceId, 'hn', notes);
+  const pb = new PushBullet(pushBulletApiKey());
+  pb.note(pushBulletDeviceId(), 'hn', notes);
 
   await dbx.addToExisting(final.map((item) => item.id));
+
+  console.log(`hn job: pushed ${final.length} new item(s)`);
 }

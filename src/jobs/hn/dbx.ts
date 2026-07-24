@@ -1,13 +1,13 @@
 import { Dropbox } from 'dropbox';
 import fetch from 'node-fetch';
-import { getHnJobConfig } from '../../config';
+import { dropboxAccessToken } from '../../config';
 import { Item } from './hnutils';
 
 const CACHE_FILE = '/hn-job.json';
 
 function client(): Dropbox {
   return new Dropbox({
-    accessToken: getHnJobConfig().dropboxAccessToken,
+    accessToken: dropboxAccessToken(),
     fetch: fetch,
   });
 }
