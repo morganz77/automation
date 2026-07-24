@@ -20,7 +20,6 @@ async function topNItems(n: number): Promise<Item[]> {
       const item = await (
         await fetch(`https://hacker-news.firebaseio.com/v0/item/${id}.json`)
       ).json();
-      console.log(item);
       return item as Item;
     } catch {
       console.error(`error: ${id}`);
