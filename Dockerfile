@@ -1,25 +1,18 @@
-# Use the official lightweight Node.js 12 image.
-# https://hub.docker.com/_/node
-FROM node:12-slim
+# ---- Build stage: install all deps and compile TypeScript to dist/ ----
+FROM node:18-slim AS build
+WORKDIR /app
+COPY package*.json tsconfig.json ./
+RUN npm ci
+COPY src ./src
+COPY types ./types
+RUN npm run build
 
-# Create and change to the app directory.
+# ---- Runtime stage: production deps + compiled output only ----
+FROM node:18-slim
 WORKDIR /usr/src/app
-
-# Copy application dependency manifests to the container image.
-# A wildcard is used to ensure copying both package.json AND package-lock.json (when available).
-# Copying this first prevents re-running npm install on every code change.
+ENV NODE_ENV=production
 COPY package*.json ./
-
-# Install production dependencies.
-# If you add a package-lock.json, speed your build by switching to 'npm ci'.
-# RUN npm ci --only=production
-RUN npm install --only=production
-
-# Copy local code to the container image.
-COPY *.sh ./
-COPY *.js ./
-
-# Run the web service on container startup.
-CMD [ "node", "index.js" ]
-
+RUN npm ci --omit=dev && npm cache clean --force
+COPY --from=build /app/dist ./dist
 EXPOSE 8080
+CMD [ "node", "dist/server.js" ]
