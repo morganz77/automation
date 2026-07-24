@@ -14,8 +14,8 @@ function requireEnv(name: string): string {
  */
 export function getHnJobConfig() {
   return {
-    pushBulletApiKey: requireEnv('PUSHBULLET_API_KEY'),
-    pushBulletDeviceId: requireEnv('PUSHBULLET_DEVICE_ID'),
-    dropboxAccessToken: requireEnv('DROPBOX_ACCESS_TOKEN'),
+    pushBulletApiKey: requireEnv('PushBulletApiKey'),
+    pushBulletDeviceId: requireEnv('DeviceId'),
+    dropboxAccessToken: requireEnv('DropAccessToken'),
   };
 }

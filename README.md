@@ -41,14 +41,16 @@ types/
 The HN job requires the following environment variables (read only when the job
 runs, so the server still starts without them):
 
-| Variable                | Description                     |
-| ----------------------- | ------------------------------- |
-| `PUSHBULLET_API_KEY`    | Pushbullet API key              |
-| `PUSHBULLET_DEVICE_ID`  | Target Pushbullet device id     |
-| `DROPBOX_ACCESS_TOKEN`  | Dropbox access token (cache)    |
+| Variable            | Description                  |
+| ------------------- | ---------------------------- |
+| `PushBulletApiKey`  | Pushbullet API key           |
+| `DeviceId`          | Target Pushbullet device id  |
+| `DropAccessToken`   | Dropbox access token (cache) |
 
-In Cloud Run these should be backed by Secret Manager rather than plain env
-values.
+For local development, copy `.env.example` to `.env` and fill in the values;
+they are loaded automatically via `dotenv`. In Cloud Run these should be
+supplied as environment variables backed by Secret Manager rather than a
+committed `.env` file.
 
 ## Develop
 
@@ -64,9 +66,9 @@ npm start          # run compiled server (needs the env vars above)
 ```bash
 docker build -t automation:latest .
 docker run -p 8080:8080 \
-  -e PUSHBULLET_API_KEY=... \
-  -e PUSHBULLET_DEVICE_ID=... \
-  -e DROPBOX_ACCESS_TOKEN=... \
+  -e PushBulletApiKey=... \
+  -e DeviceId=... \
+  -e DropAccessToken=... \
   automation:latest
 ```
 
@@ -89,9 +91,9 @@ Set the job secrets on the service (once), backed by Secret Manager:
 
 ```bash
 gcloud run services update automation --region "$REGION" \
-  --set-secrets=PUSHBULLET_API_KEY=pushbullet-api-key:latest,\
-PUSHBULLET_DEVICE_ID=pushbullet-device-id:latest,\
-DROPBOX_ACCESS_TOKEN=dropbox-access-token:latest
+  --set-secrets=PushBulletApiKey=pushbullet-api-key:latest,\
+DeviceId=pushbullet-device-id:latest,\
+DropAccessToken=dropbox-access-token:latest
 ```
 
 ## Schedule the HN job
